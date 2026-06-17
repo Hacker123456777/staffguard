@@ -1,0 +1,59 @@
+package com.staffguard;
+
+import com.staffguard.commands.OffendCommand;
+import com.staffguard.commands.SfModeCommand;
+import com.staffguard.commands.SusCommand;
+import com.staffguard.listeners.StaffListener;
+import com.staffguard.listeners.SuspicionListener;
+import com.staffguard.managers.PunishmentManager;
+import com.staffguard.managers.StaffManager;
+import com.staffguard.managers.SuspicionManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class StaffGuard extends JavaPlugin {
+
+    private static StaffGuard instance;
+    private StaffManager staffManager;
+    private SuspicionManager suspicionManager;
+    private PunishmentManager punishmentManager;
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        saveDefaultConfig();
+
+        staffManager = new StaffManager(this);
+        suspicionManager = new SuspicionManager(this);
+        punishmentManager = new PunishmentManager(this);
+
+        getCommand("sus").setExecutor(new SusCommand(this));
+        getCommand("sfmode").setExecutor(new SfModeCommand(this));
+        getCommand("offend").setExecutor(new OffendCommand(this));
+
+        getServer().getPluginManager().registerEvents(new StaffListener(this), this);
+        getServer().getPluginManager().registerEvents(new SuspicionListener(this), this);
+
+        getLogger().info("§aStaffGuard v1.0 enabled for 1.21.1!");
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("StaffGuard disabled.");
+    }
+
+    public static StaffGuard getInstance() {
+        return instance;
+    }
+
+    public StaffManager getStaffManager() {
+        return staffManager;
+    }
+
+    public SuspicionManager getSuspicionManager() {
+        return suspicionManager;
+    }
+
+    public PunishmentManager getPunishmentManager() {
+        return punishmentManager;
+    }
+}
